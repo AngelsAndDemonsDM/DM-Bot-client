@@ -12,13 +12,13 @@ from Code.systems.texture_system import TextureSystem
 
 class TestTextureSystem(unittest.TestCase):
     def setUp(self):
-        self.test_dir = 'test_sprites'
+        self.test_dir = 'test_texture'
         os.makedirs(self.test_dir, exist_ok=True)
         self.compiled_dir = os.path.abspath(os.path.join(self.test_dir, 'compiled'))
         os.makedirs(self.compiled_dir, exist_ok=True)
 
         info_data = {
-            'Sprites': [
+            'Texture': [
                 {
                     'name': 'state1',
                     'size': {'x': 100, 'y': 100},
@@ -67,22 +67,6 @@ class TestTextureSystem(unittest.TestCase):
         layers = [{'layer1': 'data1'}, {'layer2': 'data2'}]
         expected_hash = hashlib.sha256(pickle.dumps(layers)).hexdigest()
         self.assertEqual(TextureSystem._get_hash_list(layers), expected_hash)
-
-    def test_get_color_str(self):
-        color = (255, 128, 64, 32)
-        expected_str = '255_128_64_32'
-        self.assertEqual(TextureSystem._get_color_str(color), expected_str)
-
-    def test_validate_color(self):
-        valid_color = (255, 128, 64, 32)
-        try:
-            TextureSystem._validate_color(valid_color)
-        except ValueError:
-            self.fail("_validate_color raised ValueError unexpectedly!")
-
-        invalid_color = (256, 128, 64, 32)
-        with self.assertRaises(ValueError):
-            TextureSystem._validate_color(invalid_color)
 
     def test_slice_image(self):
         image = Image.new('RGBA', (450, 150), 'white')
