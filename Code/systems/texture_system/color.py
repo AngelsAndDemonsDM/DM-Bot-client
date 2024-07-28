@@ -1,3 +1,6 @@
+from typing import Tuple
+
+
 class Color:
     __slots__ = ['_r', '_g', '_b', '_a']
     
@@ -56,3 +59,10 @@ class Color:
 
     def __repr__(self) -> str:
         return f"Color(r={self.r}, g={self.g}, b={self.b}, a={self.a})"
+
+    @staticmethod
+    def from_tuple(value: Tuple[int, int, int, int]) -> "Color":
+        return Color(value[0], value[1], value[2], value[3])
+    
+    def to_tuple(self) -> Tuple[int, int, int, int]:
+        return (self.r, self.g, self.r, self.a)
