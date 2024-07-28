@@ -7,15 +7,13 @@ import unittest
 import yaml
 from PIL import Image
 
-from Code.systems.texture_system import TextureSystem
+from Code.systems.texture_system import *
 
 
 class TestTextureSystem(unittest.TestCase):
     def setUp(self):
         self.test_dir = 'test_texture'
         os.makedirs(self.test_dir, exist_ok=True)
-        self.compiled_dir = os.path.abspath(os.path.join(self.test_dir, 'compiled'))
-        os.makedirs(self.compiled_dir, exist_ok=True)
 
         info_data = {
             'Texture': [
@@ -113,7 +111,7 @@ class TestTextureSystem(unittest.TestCase):
     def test_get_compiled_png(self):
         path = self.test_dir
         state = 'state1'
-        color = (255, 255, 255, 255)
+        color = Color(255, 255, 255, 255)
 
         image = TextureSystem.get_image_recolor(path, state, color)
         compiled_image = TextureSystem._get_compiled(path, state, color, is_gif=False)
@@ -123,7 +121,7 @@ class TestTextureSystem(unittest.TestCase):
     def test_get_compiled_gif(self):
         path = self.test_dir
         state = 'state1'
-        color = (255, 255, 255, 255)
+        color = Color(255, 255, 255, 255)
         
         gif_frames = TextureSystem.get_gif_recolor(path, state, color)
         compiled_gif_frames = TextureSystem._get_compiled(path, state, color, is_gif=True)
@@ -135,7 +133,7 @@ class TestTextureSystem(unittest.TestCase):
     def test_get_image_recolor(self):
         path = self.test_dir
         state = 'state1'
-        color = (255, 0, 0, 255)
+        color = Color(255, 0, 0, 255)
         image = TextureSystem.get_image_recolor(path, state, color)
         expected_path = os.path.join(path, f'{state}_compiled_255_0_0_255.png')
         self.assertTrue(os.path.exists(expected_path))
@@ -153,7 +151,7 @@ class TestTextureSystem(unittest.TestCase):
     def test_get_gif_recolor(self):
         path = self.test_dir
         state = 'state2'
-        color = (255, 0, 0, 255)
+        color = Color(255, 0, 0, 255)
         gif_frames = TextureSystem.get_gif_recolor(path, state, color)
         expected_path = os.path.join(path, f'{state}_compiled_255_0_0_255.gif')
         self.assertTrue(os.path.exists(expected_path))
