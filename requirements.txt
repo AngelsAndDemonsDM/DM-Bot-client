@@ -3,3 +3,5 @@ Pillow
 PyQt6
 PyYAML
 requests
+pydub
+numpy
