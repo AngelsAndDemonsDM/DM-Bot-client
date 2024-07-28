@@ -150,9 +150,9 @@ class TextureSystem:
             image = image.convert("RGBA")
             new_colored_image = [
                 (
-                    int(pixel[0] * color[0] / 255),
-                    int(pixel[0] * color[1] / 255),
-                    int(pixel[0] * color[2] / 255),
+                    int(pixel[0] * color.r / 255),
+                    int(pixel[0] * color.g / 255),
+                    int(pixel[0] * color.b / 255),
                     pixel[3]
                 ) if pixel[3] != 0 else pixel
                 for pixel in image.getdata()
