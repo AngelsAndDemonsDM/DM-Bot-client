@@ -5,9 +5,10 @@ import shutil
 import unittest
 
 import yaml
+from DMBotTools import Color
 from PIL import Image
 
-from Code.systems.texture_system import *
+from Code.systems.texture_system import TextureSystem
 
 
 class TestTextureSystem(unittest.TestCase):
