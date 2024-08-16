@@ -7,9 +7,6 @@ import yaml
 from DMBotTools import Color
 from PIL import Image, ImageSequence
 
-from Code.root_path import ROOT_PATH
-
-
 class TextureSystem:
     """Статический класс TextureSystem отвечает за управление текстурами, включая их загрузку, изменение цвета, и объединение слоев в одно изображение или GIF.
     """
@@ -256,7 +253,7 @@ class TextureSystem:
         return merged_image
 
     @staticmethod
-    def merge_layers(layers: List[Dict[str, Any]], fps: int = DEFAULT_FPS) -> Union[Image.Image, List[Image.Image]]:
+    def merge_layers(root_path, layers: List[Dict[str, Any]], fps: int = DEFAULT_FPS) -> Union[Image.Image, List[Image.Image]]:
         """Объединяет слои в одно изображение или GIF.
 
         Args:
@@ -266,7 +263,7 @@ class TextureSystem:
         Returns:
             Union[Image.Image, List[Image.Image]]: Объединенное изображение или список кадров GIF.
         """
-        base_path = os.path.join(ROOT_PATH, 'Content', 'Compiled')
+        base_path = os.path.join(root_path, 'Content', 'Compiled')
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         
