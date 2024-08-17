@@ -1,6 +1,7 @@
-DMBotNetwork == 0.0.4
+dearpygui
+dearpygui-async
+DMBotNetwork
 DMBotTools
 msgpack
 Pillow
 PyYAML
-pygame
