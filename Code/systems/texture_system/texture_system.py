@@ -7,6 +7,7 @@ import yaml
 from DMBotTools import Color
 from PIL import Image, ImageSequence
 
+
 class TextureSystem:
     """Статический класс TextureSystem отвечает за управление текстурами, включая их загрузку, изменение цвета, и объединение слоев в одно изображение или GIF.
     """
