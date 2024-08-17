@@ -8,8 +8,9 @@ import yaml
 from DMBotTools import Color
 from PIL import Image
 
-from Code.systems.texture_system import TextureSystem
 from Code.root_path import ROOT_PATH
+from Code.systems.texture_system import TextureSystem
+
 
 class TestTextureSystem(unittest.TestCase):
     def setUp(self):
