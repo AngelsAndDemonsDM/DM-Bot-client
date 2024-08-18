@@ -1,7 +1,9 @@
 import dearpygui.dearpygui as dpg
 from dearpygui_async import DearPyGuiAsync
+from DMBotTools import Coordinate
 
 from .fonts import FontManager
+from .map import MapRenderer
 from .settings import SettingsManager
 
 
@@ -15,10 +17,20 @@ class DMClientApp:
         dpg.create_viewport(title="DM bot client", width=600, height=400)
         dpg.setup_dearpygui()
         self.create_main_window()
+        self.map_renderer = MapRenderer()
+        texture_paths = {
+            Coordinate(0, 0): "path/to/texture1.png",
+            Coordinate(1, 0): "path/to/texture2.png",
+            Coordinate(0, 1): "path/to/texture3.png",
+            Coordinate(1, 1): "path/to/nonexistent_texture.png",
+            Coordinate(2, 2): "path/to/texture5.png",
+        }
+        self.map_renderer.set_texture_paths(texture_paths)
 
     def create_main_window(self):
         with dpg.window(label="Main", no_title_bar=True) as main_window:
-            dpg.add_button(label="Открыть меню настрокек", callback=lambda: SettingsManager.create_settings_window())
+            dpg.add_button(label="Открыть меню настроек", callback=lambda: SettingsManager.create_settings_window())
+            dpg.add_button(label="Открыть карту", callback=lambda: self.map_renderer.create_map_window())
 
     def run(self):
         dpg.show_viewport()
