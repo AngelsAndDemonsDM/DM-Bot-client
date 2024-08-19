@@ -1,5 +1,4 @@
 import dearpygui.dearpygui as dpg
-from root_path import ROOT_PATH
 
 
 class SettingsManager:

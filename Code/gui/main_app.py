@@ -5,7 +5,7 @@ from DMBotTools import Coordinate
 from .fonts import FontManager
 from .map import MapRenderer
 from .settings import SettingsManager
-
+from .conntect import ConnectManager
 
 class DMClientApp:
     def __init__(self):
@@ -18,6 +18,8 @@ class DMClientApp:
         dpg.setup_dearpygui()
         self.create_main_window()
         self.map_renderer = MapRenderer()
+        self.connect_manager = ConnectManager()
+        
         texture_paths = {
             Coordinate(0, 0): "path/to/texture1.png",
             Coordinate(1, 0): "path/to/texture2.png",
@@ -31,10 +33,9 @@ class DMClientApp:
         with dpg.window(label="Main", no_title_bar=True) as main_window:
             dpg.add_button(label="Открыть меню настроек", callback=lambda: SettingsManager.create_settings_window())
             dpg.add_button(label="Открыть карту", callback=lambda: self.map_renderer.create_map_window())
+            dpg.add_button(label="Открыть менеджер присоединения к серверу", callback=lambda: self.connect_manager.create_connect_window())
 
     def run(self):
         dpg.show_viewport()
         self.dpg_async.run()
-
-    def cleanup(self):
         dpg.destroy_context()
