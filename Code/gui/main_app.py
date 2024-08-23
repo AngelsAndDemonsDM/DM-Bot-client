@@ -1,6 +1,7 @@
 import dearpygui.dearpygui as dpg
 from dearpygui_async import DearPyGuiAsync
 from DMBotTools import Coordinate
+from systems.loc import Localization as loc
 
 from .conntect import ConnectManager
 from .fonts import FontManager
@@ -15,7 +16,7 @@ class DMClientApp:
     def setup(self):
         dpg.create_context()
         FontManager.load_fonts()
-        dpg.create_viewport(title="DM bot client", width=600, height=400)
+        dpg.create_viewport(title=loc.get_string("main-app-name"), width=600, height=400)
         dpg.setup_dearpygui()
         self.create_main_window()
         self.map_renderer = MapRenderer()
@@ -31,10 +32,10 @@ class DMClientApp:
         self.map_renderer.set_texture_paths(texture_paths)
 
     def create_main_window(self):
-        with dpg.window(label="Main", no_title_bar=True) as main_window:
-            dpg.add_button(label="Открыть меню настроек", callback=lambda: SettingsManager.create_settings_window())
-            dpg.add_button(label="Открыть карту", callback=lambda: self.map_renderer.create_map_window())
-            dpg.add_button(label="Открыть менеджер присоединения к серверу", callback=lambda: self.connect_manager.create_connect_window())
+        with dpg.window(label=loc.get_string("main-window-lable")) as main_window:
+            dpg.add_button(label=loc.get_string("main-window-open-settings-window"), callback=lambda: SettingsManager.create_settings_window())
+            dpg.add_button(label=loc.get_string("main-window-open-map-window"), callback=lambda: self.map_renderer.create_map_window())
+            dpg.add_button(label=loc.get_string("main-window-open-connect-window"), callback=lambda: self.connect_manager.create_connect_window())
 
     def run(self):
         dpg.show_viewport()
