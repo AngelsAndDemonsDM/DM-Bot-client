@@ -1,4 +1,5 @@
 import logging
+
 from DMBotNetwork import Client
 from gui.main_app import DMClientApp
 

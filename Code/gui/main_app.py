@@ -2,10 +2,11 @@ import dearpygui.dearpygui as dpg
 from dearpygui_async import DearPyGuiAsync
 from DMBotTools import Coordinate
 
+from .conntect import ConnectManager
 from .fonts import FontManager
 from .map import MapRenderer
 from .settings import SettingsManager
-from .conntect import ConnectManager
+
 
 class DMClientApp:
     def __init__(self):

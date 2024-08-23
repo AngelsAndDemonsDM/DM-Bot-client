@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+
 import dearpygui.dearpygui as dpg
 from DMBotNetwork import Client
 from root_path import ROOT_PATH
