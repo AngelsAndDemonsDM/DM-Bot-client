@@ -17,7 +17,7 @@ class DMClientApp:
         self.create_warning_window()
 
     def create_warning_window(self):
-        with dpg.window(label="Warning", modal=True, tag="warning_window"):
+        with dpg.window(label="Warning", modal=True, tag="warning_window", no_title_bar=True):
             dpg.add_text(loc.get_string("main_text_warning_window"))
             dpg.add_button(label=loc.get_string("yes_warning_window"), callback=self.on_yes)
             dpg.add_button(label=loc.get_string("no_warning_window"), callback=self.on_no)
