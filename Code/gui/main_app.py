@@ -1,12 +1,8 @@
 import dearpygui.dearpygui as dpg
 from dearpygui_async import DearPyGuiAsync
-from DMBotTools import Coordinate
 from systems.loc import Localization as loc
 
-from .conntect import ConnectManager
 from .fonts import FontManager
-from .map import MapRenderer
-from .settings import SettingsManager
 
 
 class DMClientApp:
@@ -18,26 +14,30 @@ class DMClientApp:
         FontManager.load_fonts()
         dpg.create_viewport(title=loc.get_string("main-app-name"), width=600, height=400)
         dpg.setup_dearpygui()
+        self.create_warning_window()
+
+    def create_warning_window(self):
+        with dpg.window(label="Warning", modal=True, tag="warning_window"):
+            dpg.add_text(loc.get_string("main_text_warning_window"))
+            dpg.add_button(label=loc.get_string("yes_warning_window"), callback=self.on_yes)
+            dpg.add_button(label=loc.get_string("no_warning_window"), callback=self.on_no)
+
+    def on_yes(self, sender, app_data):
+        dpg.delete_item("warning_window")
         self.create_main_window()
-        self.map_renderer = MapRenderer()
-        self.connect_manager = ConnectManager()
-        
-        texture_paths = {
-            Coordinate(0, 0): "path/to/texture1.png",
-            Coordinate(1, 0): "path/to/texture2.png",
-            Coordinate(0, 1): "path/to/texture3.png",
-            Coordinate(1, 1): "path/to/nonexistent_texture.png",
-            Coordinate(2, 2): "path/to/texture5.png",
-        }
-        self.map_renderer.set_texture_paths(texture_paths)
+
+    def on_no(self, sender, app_data):
+        self.stop()
 
     def create_main_window(self):
-        with dpg.window(label=loc.get_string("main-window-lable")) as main_window:
-            dpg.add_button(label=loc.get_string("main-window-open-settings-window"), callback=lambda: SettingsManager.create_settings_window())
-            dpg.add_button(label=loc.get_string("main-window-open-map-window"), callback=lambda: self.map_renderer.create_map_window())
-            dpg.add_button(label=loc.get_string("main-window-open-connect-window"), callback=lambda: self.connect_manager.create_connect_window())
-
+        with dpg.window(label="Main", tag="main_window"):
+            pass
+    
     def run(self):
         dpg.show_viewport()
         self.dpg_async.run()
+        dpg.start_dearpygui()
         dpg.destroy_context()
+
+    def stop(self):
+        dpg.stop_dearpygui()

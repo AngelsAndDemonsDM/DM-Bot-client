@@ -2,8 +2,7 @@ import dearpygui.dearpygui as dpg
 
 
 class SettingsManager:
-    @staticmethod
-    def create_settings_window():
+    def create_settings_window(self):
         if dpg.does_item_exist("settings_window"):
             dpg.focus_item("settings_window")
             return

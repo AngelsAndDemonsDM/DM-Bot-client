@@ -1,6 +1,5 @@
 main-app-name = DM-Bot Client
-main-window-lable = Главное окно. Оно временно
 
-main-window-open-settings-window = Открыть окно настроек
-main-window-open-map-window = Открыть окно карты
-main-window-open-connect-window = Открыть окно соединения
+main_text_warning_window = Внимание! Использование DM-Bot разрешено только для пользователей, достигших 18-летнего возраста.
+yes_warning_window = Мне 18 или более лет
+no_warning_window = Мне нет 18 лет
