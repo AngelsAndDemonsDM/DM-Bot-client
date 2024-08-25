@@ -1,5 +1,6 @@
 import logging
 
+from api import *
 from DMBotNetwork import Client
 from gui.main_app import DMClientApp
 from root_path import ROOT_PATH

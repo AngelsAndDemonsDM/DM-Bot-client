@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 from dearpygui_async import DearPyGuiAsync
 from systems.loc import Localization as loc
 
+from .conntect import ConnectManager
 from .fonts import FontManager
 
 
@@ -15,9 +16,11 @@ class DMClientApp:
         dpg.create_viewport(title=loc.get_string("main-app-name"), width=600, height=400)
         dpg.setup_dearpygui()
         self.create_warning_window()
+        
+        self.con_manager = ConnectManager()
 
     def create_warning_window(self):
-        with dpg.window(label="Warning", modal=True, tag="warning_window", no_title_bar=True):
+        with dpg.window(label="Warning", modal=True, tag="warning_window", no_move=True, no_close=True, no_collapse=True):
             dpg.add_text(loc.get_string("main_text_warning_window"))
             dpg.add_button(label=loc.get_string("yes_warning_window"), callback=self.on_yes)
             dpg.add_button(label=loc.get_string("no_warning_window"), callback=self.on_no)
@@ -31,7 +34,9 @@ class DMClientApp:
 
     def create_main_window(self):
         with dpg.window(label="Main", tag="main_window"):
-            pass
+            dpg.add_button(label=loc.get_string("connect_window_open"), callback=self.con_manager.create_connect_window)
+            dpg.add_button(label="debug", callback=lambda: dpg.show_debug())
+            dpg.add_button(label="demo", callback=lambda: dpg.show_imgui_demo())
     
     def run(self):
         dpg.show_viewport()
