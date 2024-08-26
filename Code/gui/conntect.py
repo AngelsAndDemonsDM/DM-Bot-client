@@ -2,10 +2,12 @@ import logging
 from pathlib import Path
 
 import dearpygui.dearpygui as dpg
+from api.chat import ChatModule
 from DMBotNetwork import Client
+from misc import decode_string
 from root_path import ROOT_PATH
 from systems.loc import Localization as loc
-from api.chat import ChatModule
+
 logger = logging.getLogger("Connect")
 
 class ConnectManager:
@@ -29,7 +31,8 @@ class ConnectManager:
             dpg.add_button(label="send", callback=self.send_chat_msg)
 
     async def send_chat_msg(self, *args):
-        await ChatModule.send_ooc(dpg.get_value("OOC_CHAT"))
+        value = dpg.get_value("OOC_CHAT")
+        await ChatModule.send_ooc(decode_string(value))
 
     async def run_client(self, sender, app_data, user_data):
         await Client.close_connection()
