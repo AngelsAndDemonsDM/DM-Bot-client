@@ -11,5 +11,5 @@ class ChatModule(Client):
     
     @staticmethod
     async def send_ooc(msg: str):
-        await Client.request_method("net", "ooc_chat", msg=msg)
+        await Client.request_method("ooc_chat", msg=msg)
         return
