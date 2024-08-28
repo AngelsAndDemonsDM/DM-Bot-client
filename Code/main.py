@@ -2,7 +2,7 @@ import logging
 
 from api import *
 from DMBotNetwork import Client
-from gui.main_app import DMClientApp
+from gui.start import DMClientApp
 from root_path import ROOT_PATH
 from systems.loc import Localization as loc
 
