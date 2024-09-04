@@ -1,9 +1,8 @@
+audioplayer
 dearpygui
 dearpygui-async
 DMBotNetwork==0.1.0
 DMBotTools
 msgpack
 Pillow
-playsound==1.2.2
-pydub
 PyYAML
