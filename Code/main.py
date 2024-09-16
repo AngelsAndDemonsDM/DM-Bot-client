@@ -19,7 +19,7 @@ def init_classes() -> None:
 
 def main() -> None:
     loc.load_translations(Path(ROOT_PATH / "Content" / "Client" / "loc" / "rus"))
-    fuck = DiscordRPC()
+    DiscordRPC()
 
     Client()
     DMClientApp()
