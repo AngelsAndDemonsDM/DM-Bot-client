@@ -49,7 +49,10 @@ class DMClientApp:
             cls._center_window("warning_window", 380, 150)
 
         if dpg.does_item_exist("connect_window"):
-            cls._center_window("connect_window", 380, 400) 
+            cls._center_window("connect_window", 380, 400)
+
+        if dpg.does_item_exist("error_connect_window"):
+            cls._center_window("error_connect_window", 400, 200)
 
     @classmethod
     def _create_warning_window(cls):
@@ -62,7 +65,7 @@ class DMClientApp:
             width=380,
             height=150,
             no_resize=True,
-        ):
+        ) as warning_window:
             dpg.add_text(loc.get_string("main_text_warning_window"), wrap=0)
             dpg.add_button(
                 label=loc.get_string("yes_warning_window"), callback=cls._on_yes
@@ -70,9 +73,8 @@ class DMClientApp:
             dpg.add_button(
                 label=loc.get_string("no_warning_window"), callback=lambda: cls._on_no()
             )
-            
-            DMClientApp._center_window('warning_window', 380, 150)
-                    
+
+            DMClientApp._center_window(warning_window, 380, 150)
 
     @classmethod
     async def _on_yes(cls, *args):
@@ -128,8 +130,8 @@ class DMClientApp:
                 callback=DMClientApp._connect_to_server,
                 user_data=True,
             )
-            
-            DMClientApp._center_window('connect_window', 380, 380)
+
+            DMClientApp._center_window("connect_window", 380, 380)
 
     @classmethod
     async def _connect_to_server(cls, sender, user_data):
@@ -196,13 +198,18 @@ class DMClientApp:
     @classmethod
     def _err_window(cls, msg):
         with dpg.window(
-            label="Error", no_collapse=True, modal=True, width=400, height=200
+            label="Error",
+            tag="error_connect_window",
+            no_collapse=True,
+            modal=True,
+            width=400,
+            height=200,
         ) as err_window:
             dpg.add_text(msg, wrap=0)
             dpg.add_button(
                 label=loc.get_string("ok"), callback=lambda: dpg.delete_item(err_window)
             )
-            
+
             DMClientApp._center_window(err_window, 400, 200)
 
     @classmethod
