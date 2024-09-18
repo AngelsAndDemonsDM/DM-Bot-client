@@ -1,41 +1,46 @@
 import logging
 import dearpygui.dearpygui as dpg
 from systems.loc import Localization as loc
+from DMBotNetwork import Client
 
-users = {
-    "user1": {
-        "change_allow_registration": False,
-        "create_users": False,
-        "delete_users": True,
-        "change_access": False,
-        "change_password": True,
-    },
-    "user2": {
-        "change_allow_registration": True,
-        "create_users": True,
-        "delete_users": False,
-        "change_access": True,
-        "change_password": False,
-    },
-    "owner": {"full_access": True},
-}
+user_access_changes = {}
 
 
-def toggle_access(user_id, access_key, new_value):
-    logging.debug(f"User: {user_id}, Access Flag: {access_key}, New Value: {new_value}")
+async def toggle_access(sender, app_data, user_data):
+    user_id = user_data[0]
+    access_key = user_data[1]
+    new_value = app_data
+
+    if user_id not in user_access_changes:
+        user_access_changes[user_id] = {}
+
+    user_access_changes[user_id][access_key] = new_value
 
 
-def load_user_access(user_id: str):
+async def save_changes_for_user(user_id: str):
+    if user_id in user_access_changes:
+        changes = user_access_changes.pop(user_id)
+        await Client.req_net_func("change_access", login=user_id, changes=changes)
+
+async def handle_window_close(sender, app_data, user_data):
+    current_user = user_data
+    await save_changes_for_user(current_user)
+
+
+async def load_user_access(sender, app_data, user_data):
     if dpg.does_item_exist("access_group"):
         dpg.delete_item("access_group")
 
-    if user_id is None:
-        logging.error("user_id is None!")
+    if user_data is None:
+        logging.error("user_data is None!")
         return
 
-    user = users.get(user_id)
+    user: dict[str, bool] = await Client.req_get_data(
+        "get_access", None, login=user_data
+    )
+
     if user is None:
-        logging.error(f"User '{user_id}' not found.")
+        logging.error(f"User '{user_data}' not found.")
         return
 
     with dpg.group(tag="access_group", parent="access_rights_admin"):
@@ -45,34 +50,38 @@ def load_user_access(user_id: str):
 
         for access_key, access_value in user.items():
             with dpg.group(horizontal=True, parent="access_group"):
-                uuid = dpg.generate_uuid()
-                dpg.add_text(loc.get_string(f"text-{access_key}"), wrap=0, tag=uuid)
+                uuid_text = dpg.generate_uuid()
+                dpg.add_text(
+                    loc.get_string(f"text-{access_key}"), wrap=0, tag=uuid_text
+                )
 
                 dpg.add_checkbox(
                     default_value=access_value,
-                    callback=lambda _, value: toggle_access(user_id, access_key, value),
+                    callback=toggle_access,
+                    user_data=(user_data, access_key),
                 )
 
-                with dpg.popup(uuid):
+                with dpg.popup(uuid_text):
                     dpg.add_text(loc.get_string(f"desc-{access_key}"), wrap=0)
 
             dpg.add_spacer(width=0, height=10)
 
 
-def make_button_callback(user):
-    def callback(sender, app_data):
-        load_user_access(user)
-
-    return callback
-
-
 async def create_user_control() -> None:
-    with dpg.window(label=loc.get_string("user_control"), width=600, height=400):
+    with dpg.window(
+        label=loc.get_string("user_control"),
+        width=600,
+        height=400,
+        on_close=handle_window_close,
+    ):
+        users: list = await Client.req_get_data("get_all_users", None)
         with dpg.group(horizontal=True):
             with dpg.child_window(width=200, autosize_y=True):
                 dpg.add_text(loc.get_string("users_control_logins"))
-                for user in users.keys():
-                    dpg.add_button(label=user, callback=make_button_callback(user))
+                for user in users:
+                    dpg.add_button(
+                        label=user, callback=load_user_access, user_data=user
+                    )
 
             with dpg.child_window(
                 width=400, tag="access_rights_admin", autosize_y=True, autosize_x=True

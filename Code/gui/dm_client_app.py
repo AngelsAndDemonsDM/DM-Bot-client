@@ -1,8 +1,9 @@
 import asyncio
 import logging
 import time
+import zipfile
 from pathlib import Path
-from .windows.admin import create_user_control
+
 import dearpygui.dearpygui as dpg
 import dpg_tools
 from dearpygui_async import DearPyGuiAsync
@@ -10,8 +11,9 @@ from DMBotNetwork import Client
 from root_path import ROOT_PATH
 from systems.discord_rpc import DiscordRPC
 from systems.loc import Localization as loc
-import zipfile
+
 from .fonts_setup import FontManager
+from .windows.admin import create_user_control
 
 
 class DMClientApp:
