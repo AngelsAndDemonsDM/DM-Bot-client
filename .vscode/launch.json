@@ -6,7 +6,10 @@
             "type": "debugpy",
             "request": "launch",
             "program": "Code/main.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "args": [
+                "--debug"
+            ]
         },
         {
             "name": "Start client release",

@@ -1,0 +1,9 @@
+full_access_warning = У этого пользователя полный доступ. Вы не можете поменять права доступа.
+
+user_control = Управление правами пользователей
+
+users_control_logins = Пользователи:
+
+user_control_access_control = Права доступа
+
+user_control_not_load_user = Пользователь не выбран...

@@ -1,7 +1,8 @@
 import asyncio
+import logging
 import time
 from pathlib import Path
-
+from .windows.admin import create_user_control
 import dearpygui.dearpygui as dpg
 import dpg_tools
 from dearpygui_async import DearPyGuiAsync
@@ -9,7 +10,7 @@ from DMBotNetwork import Client
 from root_path import ROOT_PATH
 from systems.discord_rpc import DiscordRPC
 from systems.loc import Localization as loc
-
+import zipfile
 from .fonts_setup import FontManager
 
 
@@ -27,7 +28,9 @@ class DMClientApp:
             height=400,
             min_height=400,
         )
+
         dpg.setup_dearpygui()
+        dpg.show_viewport()
 
         DMClientApp._create_warning_window()
 
@@ -65,7 +68,7 @@ class DMClientApp:
             width=380,
             height=150,
             no_resize=True,
-        ) as warning_window:
+        ):
             dpg.add_text(loc.get_string("main_text_warning_window"), wrap=0)
             dpg.add_button(
                 label=loc.get_string("yes_warning_window"), callback=cls._on_yes
@@ -74,12 +77,12 @@ class DMClientApp:
                 label=loc.get_string("no_warning_window"), callback=lambda: cls._on_no()
             )
 
-            DMClientApp._center_window(warning_window, 380, 150)
+            DMClientApp._center_window("warning_window", 380, 150)
 
     @classmethod
     async def _on_yes(cls, *args):
         dpg.delete_item("warning_window")
-        await cls._create_connect_window()
+        await DMClientApp._create_connect_window()
 
     @classmethod
     def _on_no(cls, *args):
@@ -184,11 +187,9 @@ class DMClientApp:
             cls._err_window(msg)
             return
 
-        # Cain: Bruuuh. Надо сделать api обращение, а то дичь.
-        server_name = Client._server_name
-
         await DiscordRPC.update(
-            f'Connect to "{server_name}" as "{login}"', start=int(time.time())
+            f'Connect to "{Client.get_server_name()}" as "{login}"',
+            start=int(time.time()),
         )
 
         dpg.delete_item("connect_window")
@@ -214,12 +215,35 @@ class DMClientApp:
 
     @classmethod
     async def setup_start_windows(cls) -> None:
-        return
-        access = await Client.req_get_data("get_access", "access")
+        await cls.download_content_from_server()
+        loc.load_translations(Path(ROOT_PATH / "Content" / "Servers" / Client.get_server_name() / "loc" / "rus"))
+        await create_user_control()
+
+    @classmethod
+    async def download_content_from_server(cls) -> None:
+        anser = await Client.req_get_data("download_server_conent", "download")
+        if anser != "done":
+            logging.error(anser)
+            return
+
+        file_path = (
+            Path(ROOT_PATH)
+            / "Content"
+            / "Servers"
+            / Client.get_server_name()
+            / "server_contet.zip"
+        )
+        extract_path = (
+            Path(ROOT_PATH) / "Content" / "Servers" / Client.get_server_name()
+        )
+
+        with zipfile.ZipFile(file_path, "r") as zip_ref:
+            zip_ref.extractall(extract_path)
+
+        file_path.unlink()
 
     @classmethod
     def run(cls):
-        dpg.show_viewport()
         cls._dpg_async.run()
         dpg.start_dearpygui()
         dpg.destroy_context()
