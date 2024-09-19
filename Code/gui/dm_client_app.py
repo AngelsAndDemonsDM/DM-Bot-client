@@ -38,26 +38,17 @@ class DMClientApp:
 
         dpg.set_viewport_resize_callback(DMClientApp._center_all_windows)
 
-    @staticmethod
-    def _center_window(tag, width, height):
-        """Центрируем окно с тегом tag относительно размеров экрана"""
-        vp_width = dpg.get_viewport_client_width()
-        vp_height = dpg.get_viewport_client_height()
-        x_pos = (vp_width - width) // 2
-        y_pos = (vp_height - height) // 2
-        dpg.set_item_pos(tag, [x_pos, y_pos])
-
     @classmethod
     def _center_all_windows(cls, sender=None, app_data=None):
         """Центрирует все окна"""
         if dpg.does_item_exist("warning_window"):
-            cls._center_window("warning_window", 380, 150)
+            dpg_tools.center_window("warning_window", 380, 150)
 
         if dpg.does_item_exist("connect_window"):
-            cls._center_window("connect_window", 380, 400)
+            dpg_tools.center_window("connect_window", 380, 400)
 
         if dpg.does_item_exist("error_connect_window"):
-            cls._center_window("error_connect_window", 400, 200)
+            dpg_tools.center_window("error_connect_window", 400, 200)
 
     @classmethod
     def _create_warning_window(cls):
@@ -79,7 +70,7 @@ class DMClientApp:
                 label=loc.get_string("no_warning_window"), callback=lambda: cls._on_no()
             )
 
-            DMClientApp._center_window("warning_window", 380, 150)
+            dpg_tools.center_window("warning_window", 380, 150)
 
     @classmethod
     async def _on_yes(cls, *args):
@@ -136,10 +127,10 @@ class DMClientApp:
                 user_data=True,
             )
 
-            DMClientApp._center_window("connect_window", 380, 380)
+            dpg_tools.center_window("connect_window", 380, 380)
 
     @classmethod
-    async def _connect_to_server(cls, sender, user_data):
+    async def _connect_to_server(cls, sender, app_data, user_data):
         if Client._is_connected:
             return
 
@@ -213,12 +204,21 @@ class DMClientApp:
                 label=loc.get_string("ok"), callback=lambda: dpg.delete_item(err_window)
             )
 
-            DMClientApp._center_window(err_window, 400, 200)
+            dpg_tools.center_window(err_window, 400, 200)
 
     @classmethod
     async def setup_start_windows(cls) -> None:
         await cls.download_content_from_server()
-        loc.load_translations(Path(ROOT_PATH / "Content" / "Servers" / Client.get_server_name() / "loc" / "rus"))
+        loc.load_translations(
+            Path(
+                ROOT_PATH
+                / "Content"
+                / "Servers"
+                / Client.get_server_name()
+                / "loc"
+                / "rus"
+            )
+        )
         await create_user_control()
 
     @classmethod

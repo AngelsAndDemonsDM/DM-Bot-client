@@ -19,6 +19,15 @@ def decode_string(instr: str):
     return instr.translate(translation_table)
 
 
+def center_window(tag, width, height):
+    """Центрируем окно с тегом tag относительно размеров экрана"""
+    vp_width = dpg.get_viewport_client_width()
+    vp_height = dpg.get_viewport_client_height()
+    x_pos = (vp_width - width) // 2
+    y_pos = (vp_height - height) // 2
+    dpg.set_item_pos(tag, [x_pos, y_pos])
+
+
 def add_timer(interval, callback, repeat_count=None, *args, **kwargs):
     is_coroutine = inspect.iscoroutinefunction(callback)
     task = asyncio.create_task(

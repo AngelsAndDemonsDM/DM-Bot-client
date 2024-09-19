@@ -3,28 +3,22 @@ import dearpygui.dearpygui as dpg
 from systems.loc import Localization as loc
 from DMBotNetwork import Client
 
-user_access_changes = {}
-
 
 async def toggle_access(sender, app_data, user_data):
     user_id = user_data[0]
     access_key = user_data[1]
     new_value = app_data
 
-    if user_id not in user_access_changes:
-        user_access_changes[user_id] = {}
+    changes = {access_key: new_value}
+    
+    try:
+        await Client.req_net_func(
+            "change_access", login=user_id, changes=changes
+        )
+        logging.info(f"Access change for {user_id}: {access_key} -> {new_value}")
 
-    user_access_changes[user_id][access_key] = new_value
-
-
-async def save_changes_for_user(user_id: str):
-    if user_id in user_access_changes:
-        changes = user_access_changes.pop(user_id)
-        await Client.req_net_func("change_access", login=user_id, changes=changes)
-
-async def handle_window_close(sender, app_data, user_data):
-    current_user = user_data
-    await save_changes_for_user(current_user)
+    except Exception as e:
+        logging.error(f"Failed to update access for {user_id}: {e}")
 
 
 async def load_user_access(sender, app_data, user_data):
@@ -72,9 +66,9 @@ async def create_user_control() -> None:
         label=loc.get_string("user_control"),
         width=600,
         height=400,
-        on_close=handle_window_close,
     ):
         users: list = await Client.req_get_data("get_all_users", None)
+
         with dpg.group(horizontal=True):
             with dpg.child_window(width=200, autosize_y=True):
                 dpg.add_text(loc.get_string("users_control_logins"))
