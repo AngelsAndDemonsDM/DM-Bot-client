@@ -13,7 +13,7 @@ from systems.discord_rpc import DiscordRPC
 from systems.loc import Localization as loc
 
 from .fonts_setup import FontManager
-from .windows.admin import create_user_control
+from .windows.admin import admin_main_window
 
 
 class DMClientApp:
@@ -35,20 +35,6 @@ class DMClientApp:
         dpg.show_viewport()
 
         DMClientApp._create_warning_window()
-
-        dpg.set_viewport_resize_callback(DMClientApp._center_all_windows)
-
-    @classmethod
-    def _center_all_windows(cls, sender=None, app_data=None):
-        """Центрирует все окна"""
-        if dpg.does_item_exist("warning_window"):
-            dpg_tools.center_window("warning_window", 380, 150)
-
-        if dpg.does_item_exist("connect_window"):
-            dpg_tools.center_window("connect_window", 380, 400)
-
-        if dpg.does_item_exist("error_connect_window"):
-            dpg_tools.center_window("error_connect_window", 400, 200)
 
     @classmethod
     def _create_warning_window(cls):
@@ -219,7 +205,14 @@ class DMClientApp:
                 / "rus"
             )
         )
-        await create_user_control()
+        access = await Client.req_get_data("get_access", None, login=Client.get_login())
+        dpg.add_viewport_menu_bar(tag="main_bar")
+        
+        dpg.add_menu_item(label=loc.get_string('cur_login', login=Client.get_login()), parent='main_bar', enabled=False)
+
+        # При всём желании, проверка прав проходит на сервере. Даже не пытайтесь.
+        if "full_access" in access:
+            await admin_main_window()
 
     @classmethod
     async def download_content_from_server(cls) -> None:
