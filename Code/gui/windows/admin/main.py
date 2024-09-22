@@ -2,8 +2,7 @@ import dearpygui.dearpygui as dpg
 from systems.loc import Localization as loc
 
 from .manage_server_settings import manage_server_settings
-from .manage_users import manage_users
-from .user_access_control import user_access_control
+from .manage_users import user_management
 
 
 async def admin_main_window():
@@ -14,19 +13,13 @@ async def admin_main_window():
     )
 
     dpg.add_menu_item(
-        label=loc.get_string("user_access_control_lable"),
+        label=loc.get_string("user_management_label"),
         parent="admin_control_menu_bar",
-        callback=user_access_control,
+        callback=user_management,
     )
 
     dpg.add_menu_item(
         label=loc.get_string("manage_server_settings_lable"),
         parent="admin_control_menu_bar",
         callback=manage_server_settings,
-    )
-
-    dpg.add_menu_item(
-        label=loc.get_string("manage_users_lable"),
-        parent="admin_control_menu_bar",
-        callback=manage_users,
     )

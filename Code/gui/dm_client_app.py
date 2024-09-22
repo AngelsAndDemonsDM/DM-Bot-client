@@ -57,7 +57,7 @@ class DMClientApp:
                 label=loc.get_string("no_warning_window"), callback=lambda: cls._on_no()
             )
 
-            dpg_tools.center_window("warning_window", 380, 150)
+            dpg_tools.center_window("warning_window")
 
     @classmethod
     async def _on_yes(cls, *args):
@@ -91,16 +91,22 @@ class DMClientApp:
             dpg.add_input_text(
                 hint=loc.get_string("connect_login_hint"), tag="connect_login"
             )
+
             dpg.add_input_text(
                 hint=loc.get_string("connect_password_hint"),
                 tag="connect_password",
                 password=True,
             )
+
             dpg.add_input_text(
                 hint=loc.get_string("connect_host_hint"), tag="connect_host"
             )
+
             dpg.add_input_int(
-                label=loc.get_string("connect_port_lable"), tag="connect_port"
+                label=loc.get_string("connect_port_lable"),
+                tag="connect_port",
+                min_clamped=True,
+                min_value=0,
             )
 
             dpg.add_button(
@@ -114,7 +120,7 @@ class DMClientApp:
                 user_data=True,
             )
 
-            dpg_tools.center_window("connect_window", 380, 380)
+            dpg_tools.center_window("connect_window")
 
     @classmethod
     async def _connect_to_server(cls, sender, app_data, user_data):
@@ -191,7 +197,7 @@ class DMClientApp:
                 label=loc.get_string("ok"), callback=lambda: dpg.delete_item(err_window)
             )
 
-            dpg_tools.center_window(err_window, 400, 200)
+            dpg_tools.center_window(err_window)
 
     @classmethod
     async def setup_start_windows(cls) -> None:
