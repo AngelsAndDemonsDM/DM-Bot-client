@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import shutil
 import time
 import zipfile
 from pathlib import Path
@@ -117,7 +118,7 @@ class DMClientApp:
 
     @classmethod
     async def _connect_to_server(cls, sender, app_data, user_data):
-        if Client._is_connected:
+        if Client.is_connected():
             return
 
         if not user_data and dpg.is_key_down(dpg.mvKey_Control):  # For debug
@@ -207,8 +208,12 @@ class DMClientApp:
         )
         access = await Client.req_get_data("get_access", None, login=Client.get_login())
         dpg.add_viewport_menu_bar(tag="main_bar")
-        
-        dpg.add_menu_item(label=loc.get_string('cur_login', login=Client.get_login()), parent='main_bar', enabled=False)
+
+        dpg.add_menu_item(
+            label=loc.get_string("cur_login", login=Client.get_login()),
+            parent="main_bar",
+            enabled=False,
+        )
 
         # При всём желании, проверка прав проходит на сервере. Даже не пытайтесь.
         if "full_access" in access:
@@ -216,26 +221,45 @@ class DMClientApp:
 
     @classmethod
     async def download_content_from_server(cls) -> None:
-        anser = await Client.req_get_data("download_server_conent", "download")
-        if anser != "done":
-            logging.error(anser)
-            return
-
-        file_path = (
-            Path(ROOT_PATH)
-            / "Content"
-            / "Servers"
-            / Client.get_server_name()
-            / "server_contet.zip"
-        )
-        extract_path = (
+        server_content_path: Path = (
             Path(ROOT_PATH) / "Content" / "Servers" / Client.get_server_name()
         )
+        local_hash_path = server_content_path / "content_hash"
+
+        if local_hash_path.exists():
+            with local_hash_path.open("r") as file:
+                local_hash = file.read().strip()
+        else:
+            local_hash = None
+
+        server_hash = await Client.req_get_data("get_server_content_hash", None)
+
+        if local_hash == server_hash:
+            return
+
+        else:
+            if server_content_path.exists():
+                for item in server_content_path.iterdir():
+                    if item.is_file():
+                        item.unlink()
+                    elif item.is_dir():
+                        shutil.rmtree(item)
+
+        answer = await Client.req_get_data("download_server_content", None)
+        if answer != "done":
+            logging.error(f"Error while download content: {answer}")
+            return
+
+        file_path = server_content_path / "server_content.zip"
+        extract_path = server_content_path
 
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(extract_path)
 
         file_path.unlink()
+
+        with local_hash_path.open("w") as file:
+            file.write(server_hash)
 
     @classmethod
     def run(cls):

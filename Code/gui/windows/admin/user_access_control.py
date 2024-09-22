@@ -5,29 +5,30 @@ from DMBotNetwork import Client
 from systems.loc import Localization as loc
 
 
-async def user_access_control() -> None:
-    if dpg.does_item_exist("user_access_control"):
-        dpg.focus_item("user_access_control")
+async def user_access_control(sender, app_data, user_data) -> None:
+    if dpg.does_item_exist("user_access_control_window"):
+        dpg.focus_item("user_access_control_window")
         return
 
     with dpg.window(
         label=loc.get_string("user_access_control_lable"),
-        tag="user_access_control",
+        tag="user_access_control_window",
         width=400,
         height=200,
+        on_close=_on_close
     ):
         users: list = await Client.req_get_data("get_all_users", None)
 
         with dpg.group(horizontal=True):
-            with dpg.child_window(width=100, autosize_y=True):
-                dpg.add_text(loc.get_string("users_control_logins"))
+            with dpg.child_window(width=200, autosize_y=True):
+                dpg.add_text(loc.get_string("users_control_logins"), wrap=0)
                 for user in users:
                     dpg.add_button(
                         label=user, callback=load_user_access, user_data=user
                     )
 
             with dpg.child_window(
-                width=300, tag="access_rights_admin", autosize_y=True, autosize_x=True
+                width=200, tag="access_rights_admin", autosize_y=True, autosize_x=True
             ):
                 dpg.add_text(loc.get_string("user_control_access_control"), wrap=0)
                 with dpg.group(tag="access_group"):
@@ -69,7 +70,7 @@ async def load_user_access(sender, app_data, user_data):
                 )
 
                 with dpg.tooltip(uuid_text):
-                    dpg.add_text(loc.get_string(f"desc-{access_key}"), wrap=0)
+                    dpg.add_text(loc.get_string(f"desc-{access_key}"), wrap=300)
 
             dpg.add_spacer(width=0, height=10)
 
@@ -87,3 +88,8 @@ async def toggle_access(sender, app_data, user_data):
 
     except Exception as e:
         logging.error(f"Failed to update access for {user_id}: {e}")
+
+
+def _on_close():
+    if dpg.does_item_exist("user_access_control_window"):
+        dpg.delete_item("user_access_control_window")
