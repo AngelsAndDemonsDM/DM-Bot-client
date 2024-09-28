@@ -214,6 +214,9 @@ class DMClientApp:
             )
         )
         access = await Client.req_get_data("get_access", None, login=Client.get_login())
+        
+        dpg.add_handler_registry(tag='main_registry')
+        
         dpg.add_viewport_menu_bar(tag="main_bar")
 
         dpg.add_menu_item(
@@ -222,7 +225,7 @@ class DMClientApp:
             enabled=False,
         )
 
-        # При всём желании, проверка прав проходит на сервере. Даже не пытайтесь.
+        # При всём желании, проверка прав проходит на сервере. Даже не пытайтесь якобы взломать игру.
         if "full_access" in access:
             await admin_menu_setup()
 
